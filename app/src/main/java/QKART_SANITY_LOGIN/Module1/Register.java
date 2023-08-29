@@ -37,7 +37,7 @@ public class Register {
             // Concatenate the timestamp to string to form unique timestamp
             test_data_username = Username + "_" + String.valueOf(timestamp.getTime());
         else
-             test_data_username = Username + "_" + String.valueOf(timestamp.getTime());
+             test_data_username = Username;
 
         // Type the generated username in the username field
         username_txt_box.sendKeys(test_data_username);
@@ -58,7 +58,7 @@ public class Register {
 
         // Find the register now button
         WebElement register_now_button = this.driver.findElement(By.className("button"));
-
+        
         // Click the register now button
         register_now_button.click();
         // Wait for registration to complete

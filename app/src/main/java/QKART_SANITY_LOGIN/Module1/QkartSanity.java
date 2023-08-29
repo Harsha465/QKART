@@ -71,7 +71,9 @@ public class QkartSanity {
         // Visit the login page and login with the previuosly registered user
         Login login = new Login(driver);
         login.navigateToLoginPage();
+        Thread.sleep(2000);
         status = login.PerformLogin(lastGeneratedUserName, "abc@123");
+        System.out.println(status);
         logStatus("Test Step", "User Perform Login: ", status ? "PASS" : "FAIL");
         if (!status) {
             logStatus("End TestCase", "Test Case 1: Verify user Registration : ", status ? "PASS" : "FAIL");
@@ -93,15 +95,15 @@ public class QkartSanity {
         Boolean status;
         logStatus("Start Testcase", "Test Case 2: Verify User Registration with an existing username ", "DONE");
 
-        // Visit the Registration page and register a new user
+        // Visit the Registration page and register a new user 
         Register registration = new Register(driver);
         registration.navigateToRegisterPage();
         status = registration.registerUser("testUser", "abc@123", true);
+        System.out.println(status);
         logStatus("Test Step", "User Registration : ", status ? "PASS" : "FAIL");
         if (!status) {
-            logStatus("End TestCase", "Test Case 2: Verify user Registration : ", status ? "PASS" : "FAIL");
+            logStatus("End TestCase", "Test Case 2: Verify user Registration : ", status ? "FAIL" : "PASS");
             return false;
-
         }
 
         // Save the last generated username
@@ -111,9 +113,10 @@ public class QkartSanity {
         // registered user's credentials
         registration.navigateToRegisterPage();
         status = registration.registerUser(lastGeneratedUserName, "abc@123", false);
-
+        System.out.println(status);//true
         // If status is true, then registration succeeded, else registration has
         // failed. In this case registration failure means Success
+        
         logStatus("End TestCase", "Test Case 2: Verify user Registration : ", status ? "FAIL" : "PASS");
         return !status;
     }
@@ -122,6 +125,8 @@ public class QkartSanity {
         int totalTests = 0;
         int passedTests = 0;
         Boolean status;
+        RemoteWebDriver driver = createDriver();
+
         // Maximize and Implicit Wait for things to initailize
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
