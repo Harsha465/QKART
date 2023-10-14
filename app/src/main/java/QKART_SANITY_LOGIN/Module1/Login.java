@@ -39,7 +39,6 @@ public class Login {
 
         // Enter the password
         password_txt_box.sendKeys(Password);
-        Thread.sleep(1000);
 
         // Find the Login Button
         WebElement login_button = driver.findElement(By.className("button"));
