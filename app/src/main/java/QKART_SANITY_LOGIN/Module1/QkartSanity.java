@@ -296,7 +296,7 @@ public class QkartSanity {
         checkoutPage.addNewAddress("Addr line 1 addr Line 2 addr line 3");
         Thread.sleep(3000);
         checkoutPage.selectAddress("Addr line 1 addr Line 2 addr line 3");
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         // Place the order
         checkoutPage.placeOrder();
         Thread.sleep(3000);
@@ -440,7 +440,7 @@ public class QkartSanity {
         checkoutPage.selectAddress("Addr line 1 addr Line 2 addr line 3");
         Thread.sleep(2000);
         checkoutPage.placeOrder();
-        Thread.sleep(3000);
+        // Thread.sleep(1000);
 
         status = checkoutPage.verifyInsufficientBalanceMessage();
 
@@ -464,57 +464,57 @@ public class QkartSanity {
 
         try {
             // Execute Test Case 1
-            // totalTests += 1;
-            // status = TestCase01(driver);
-            // if (status) {
-            //     passedTests += 1;
-            // }
+            totalTests += 1;
+            status = TestCase01(driver);
+            if (status) {
+                passedTests += 1;
+            }
 
-            // System.out.println("");
+            System.out.println("");
 
-            // // Execute Test Case 2
-            // totalTests += 1;
-            // status = TestCase02(driver);
-            // if (status) {
-            //     passedTests += 1;
-            // }
+            // Execute Test Case 2
+            totalTests += 1;
+            status = TestCase02(driver);
+            if (status) {
+                passedTests += 1;
+            }
 
-            // System.out.println("");
-            // // Execute Test Case 3
-            // totalTests += 1;
-            // status = TestCase03(driver);
-            // if (status) {
-            // passedTests += 1;
-            // }
+            System.out.println("");
+            // Execute Test Case 3
+            totalTests += 1;
+            status = TestCase03(driver);
+            if (status) {
+            passedTests += 1;
+            }
 
-            // System.out.println("");
+            System.out.println("");
 
-            // // Execute Test Case 4
-            // totalTests += 1;
-            // status = TestCase04(driver);
-            // if (status) {
-            // passedTests += 1;
-            // }
+            // Execute Test Case 4
+            totalTests += 1;
+            status = TestCase04(driver);
+            if (status) {
+            passedTests += 1;
+            }
 
-            // System.out.println("");
+            System.out.println("");
 
-            // // Execute Test Case 5
-            // totalTests += 1;
-            // status = TestCase05(driver);
-            // if (status) {
-            // passedTests += 1;
-            // }
+            // Execute Test Case 5
+            totalTests += 1;
+            status = TestCase05(driver);
+            if (status) {
+            passedTests += 1;
+            }
 
-            // System.out.println("");
+            System.out.println("");
 
             // Execute Test Case 6
-            // totalTests += 1;
-            // status = TestCase06(driver);
-            // if (status) {
-            // passedTests += 1;
-            // }
+            totalTests += 1;
+            status = TestCase06(driver);
+            if (status) {
+            passedTests += 1;
+            }
 
-            // System.out.println("");
+            System.out.println("");
 
             // Execute Test Case 7
             totalTests += 1;

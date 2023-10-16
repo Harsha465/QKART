@@ -108,16 +108,16 @@ public class Checkout {
     public Boolean verifyInsufficientBalanceMessage() {
         try {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 07: MILESTONE 6
-            String c_url = "https://crio-qkart-frontend-qa.vercel.app/checkout";
-            String succ_url = "https://crio-qkart-frontend-qa.vercel.app/thanks";
+            String expectedText = "You do not have enough balance in your wallet for this purchase";
+
             Boolean status = true;
-            if(c_url.equals(driver.getCurrentUrl())){
-                System.out.println("Please check the wallet balance !, Insufficient Balance!!!");
-                return status;
-            }
-            else if(succ_url.equals(driver.getCurrentUrl())){
-                System.out.println("Order Placed Successfully !!!");
-            }
+
+            WebElement error = driver.findElement(By.xpath("//div[@class='SnackbarItem-message']"));
+            if(error.isDisplayed()){
+                if(error.getText().equals(expectedText)){
+                    return status;
+                }
+            }    
             return false;
         } catch (Exception e) {
             System.out.println("Exception while verifying insufficient balance message: " + e.getMessage());
