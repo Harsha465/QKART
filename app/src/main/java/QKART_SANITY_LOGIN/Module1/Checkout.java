@@ -1,7 +1,7 @@
 package QKART_SANITY_LOGIN.Module1;
 
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -27,18 +27,16 @@ public class Checkout {
      */
     public Boolean addNewAddress(String addresString) {
         try {
-            // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 05: MILESTONE 4
             /*
-             * Click on the "Add new address" button, enter the addressString in the address
-             * text box and click on the "ADD" button to save the address
+             * Click on the "Add new address" button, enter the addressString in the address text
+             * box and click on the "ADD" button to save the address
              */
-            WebElement addAddressBtn = driver.findElement(By.id("add-new-btn"));
-            addAddressBtn.click();
-            WebElement addAddress_Parent = driver.findElement(By.className("css-j7qwjs"));
-            WebElement addAddress = addAddress_Parent.findElement(By.tagName("textarea"));
-            addAddress.sendKeys(addresString);
-            Thread.sleep(1000);
-            addAddress_Parent.findElement(By.tagName("button")).click();
+            driver.findElement(By.xpath("//button[@id = 'add-new-btn']")).click();
+            driver.findElement(By.xpath("//textarea[1]")).sendKeys(addresString);
+            driver.findElement(By.xpath("//button[text() = 'Add']")).click();
+            WebDriverWait wait = new WebDriverWait(driver, 30);
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//p[@class = 'MuiTypography-root MuiTypography-body1 css-yg30e6']")));
             return true;
         } catch (Exception e) {
             System.out.println("Exception occurred while entering address: " + e.getMessage());
@@ -52,32 +50,22 @@ public class Checkout {
      */
     public Boolean selectAddress(String addressToSelect) {
         try {
-            // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 05: MILESTONE 4
             /*
-             * Iterate through all the address boxes to find the address box with matching
-             * text, addressToSelect and click on it
+             * Iterate through all the address boxes to find the address box with matching text,
+             * addressToSelect and click on it
              */
-            
-            List<WebElement> addressList = driver.findElements(By.xpath("//*[text()='"+addressToSelect+"']"));
-            // if(addressList.isDisplayed()){
-            //     addressList.click();
-            Thread.sleep(1000);
-            // return true;
-            // }
-            for(int i=0;i<addressList.size();i++){
-                Thread.sleep(1000);
-                if(addressToSelect.equals(addressList.get(i).getText())){
-                    // Thread.sleep(1000);
-                    WebElement elements = driver.findElement(By.xpath("//*[@id='root']/div/div[2]/div[1]/div/div[1]/div/div[1]/span/input"));
-                    elements.click();
-                    Thread.sleep(2000);
-                    return true;
-                }
+            // Thread.sleep(5000);
+            WebElement selEle =
+                    driver.findElement(By.xpath("//p[text() = \"" + addressToSelect + "\"]"));
+            if (selEle.isDisplayed()) {
+                selEle.click();
+                return true;
             }
             System.out.println("Unable to find the given address");
             return false;
         } catch (Exception e) {
-            System.out.println("Exception Occurred while selecting the given address: " + e.getMessage());
+            System.out.println(
+                    "Exception Occurred while selecting the given address: " + e.getMessage());
             return false;
         }
 
@@ -90,16 +78,13 @@ public class Checkout {
         try {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 05: MILESTONE 4
             // Find the "PLACE ORDER" button and click on it
-           if(driver.findElement(By.xpath("//button[text()='PLACE ORDER']")).isEnabled()){
-            driver.findElement(By.xpath("//button[text()='PLACE ORDER']")).click();
+            driver.findElement(By.xpath("//button[text() = 'PLACE ORDER']")).click();
             return true;
-           }
-           return false;
+
         } catch (Exception e) {
             System.out.println("Exception while clicking on PLACE ORDER: " + e.getMessage());
             return false;
         }
-        
     }
 
     /*
@@ -108,19 +93,19 @@ public class Checkout {
     public Boolean verifyInsufficientBalanceMessage() {
         try {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 07: MILESTONE 6
-            String expectedText = "You do not have enough balance in your wallet for this purchase";
-
-            Boolean status = true;
-
-            WebElement error = driver.findElement(By.xpath("//div[@class='SnackbarItem-message']"));
-            if(error.isDisplayed()){
-                if(error.getText().equals(expectedText)){
-                    return status;
+            WebElement insuffcientBalElement =
+                    driver.findElement(By.xpath("//div[@id = 'notistack-snackbar']"));
+            if (insuffcientBalElement.isDisplayed()) {
+                if (insuffcientBalElement.getText().equals(
+                        "You do not have enough balance in your wallet for this purchase")) {
+                    return true;
                 }
-            }    
+
+            }
             return false;
         } catch (Exception e) {
-            System.out.println("Exception while verifying insufficient balance message: " + e.getMessage());
+            System.out.println(
+                    "Exception while verifying insufficient balance message: " + e.getMessage());
             return false;
         }
     }

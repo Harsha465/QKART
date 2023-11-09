@@ -3,6 +3,7 @@ package QKART_SANITY_LOGIN.Module1;
 import java.sql.Timestamp;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -32,33 +33,40 @@ public class Register {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         String test_data_username;
-        if (makeUsernameDynamic){
-            test_data_username = Username + "_" + String.valueOf(timestamp.getTime());
-            lastGeneratedUsername = test_data_username;
-        }
+        if (makeUsernameDynamic)
             // Concatenate the timestamp to string to form unique timestamp
-            
+            test_data_username = Username + "_" + String.valueOf(timestamp.getTime());
         else
-        test_data_username = Username;
+             test_data_username = Username;
 
+        // Type the generated username in the username field
         username_txt_box.sendKeys(test_data_username);
-        WebElement password_txt_box = driver.findElement(By.id("password"));
+
+        // Find the password Text Box
+        WebElement password_txt_box = this.driver.findElement(By.id("password"));
         String test_data_password = Password;
+
+        // Enter the Password value
         password_txt_box.sendKeys(test_data_password);
+
+        // Find the Confirm password text box
         WebElement confirm_password_txt_box;
         confirm_password_txt_box = this.driver.findElement(By.id("confirmPassword"));
+
+        // Enter the Confirm Password Value
         confirm_password_txt_box.sendKeys(test_data_password);
-        WebElement register_now_button = driver.findElement(By.className("button"));
+
+        // Find the register now button
+        WebElement register_now_button = this.driver.findElement(By.className("button"));
+        
+        // Click the register now button
         register_now_button.click();
-        Thread.sleep(5000);
+        // Wait for registration to complete
+        Thread.sleep(3000);
 
-        try {
-                WebDriverWait wait = new WebDriverWait(driver, 30);
-                wait.until(ExpectedConditions.urlContains("/login"));
-        } catch (Exception e) {
-                return false;
-        }
 
-        return driver.getCurrentUrl().endsWith("/login");
+        this.lastGeneratedUsername = test_data_username;
+
+        return this.driver.getCurrentUrl().endsWith("/login");
     }
 }

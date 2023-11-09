@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -49,16 +47,10 @@ public class Home {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 03: MILESTONE 1
             // Clear the contents of the search box and Enter the product name in the search
             // box
-            WebElement searchEle = driver.findElement(By.xpath("//input[@name = 'search']"));
-            searchEle.clear();
-            searchEle.sendKeys(product);
-            searchEle.sendKeys(Keys.ENTER);
-            WebDriverWait wait = new WebDriverWait(driver, 30);
-            ExpectedCondition resultsFound = ExpectedConditions.visibilityOfAllElementsLocatedBy(
-                    By.xpath("//p[@class = 'MuiTypography-root MuiTypography-body1 css-yg30e6']"));
-            ExpectedCondition resultNotFound = ExpectedConditions
-                    .visibilityOfElementLocated(By.xpath("//h4[text() = ' No products found ']"));
-            wait.until(ExpectedConditions.or(resultNotFound, resultsFound));
+            WebElement searchbar = driver.findElement(By.name("search"));
+            searchbar.clear();
+            searchbar.sendKeys(product);
+            Thread.sleep(1000);
             return true;
         } catch (Exception e) {
             System.out.println("Error while searching for a product: " + e.getMessage());
@@ -70,20 +62,21 @@ public class Home {
      * Returns Array of Web Elements that are search results and return the same
      */
     public List<WebElement> getSearchResults() {
-        List<WebElement> searchResults = new ArrayList<WebElement>() {};
+
         try {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 03: MILESTONE 1
             // Find all webelements corresponding to the card content section of each of
             // search results
-            searchResults = driver
-                    .findElements(By.xpath("//div[@class = 'MuiCardContent-root css-1qw96cp']"));
+            List<WebElement> searchResults = new ArrayList<WebElement>();
+            WebElement par_res = driver.findElement(By.className("css-1msksyp"));
+            searchResults = par_res.findElements(By.className("css-sycj1h"));
             return searchResults;
-        } catch (Exception e) {
-            System.out.println("There were no search results: " + e.getMessage());
-            return searchResults;
-
+        } catch (Exception var3) {
+            System.out.println("There were no search results: " + var3.getMessage());
         }
+        return null;
     }
+
 
     /*
      * Returns Boolean based on if the "No products found" text is displayed
@@ -91,11 +84,17 @@ public class Home {
     public Boolean isNoResultFound() {
         Boolean status = false;
         try {
+            String str = "No products found";
+            if (getSearchResults().size() == 0) {
+                if (str.equals(this.driver
+                        .findElement(By.xpath("//*[contains(text(),'No products found')]"))
+                        .getText())) {
+                    status = true;
+                }
+            }
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 03: MILESTONE 1
             // Check the presence of "No products found" text in the web page. Assign status
             // = true if the element is *displayed* else set status = false
-            WebElement noText = driver.findElement(By.xpath("//h4"));
-            status = noText.isDisplayed();
             return status;
         } catch (Exception e) {
             return status;
@@ -107,26 +106,21 @@ public class Home {
      */
     public Boolean addProductToCart(String productName) {
         try {
-            /*
-             * Iterate through each product on the page to find the WebElement corresponding to the
-             * matching productName
-             * 
-             * Click on the "ADD TO CART" button for that element
-             * 
-             * Return true if these operations succeeds
-             */
-            List<WebElement> searchRes = getSearchResults();
-            for (WebElement ele : searchRes) {
-                WebElement temp = ele.findElement(By.xpath("./p[1]"));
 
-                if (temp.getText().equalsIgnoreCase(productName)) {
-                    ele.findElement(By.xpath("./following-sibling::div/button")).click();
-                    return true;
+            Boolean status = true;
+            List<WebElement> results = driver.findElements(By.className("css-sycj1h"));
+
+            for (WebElement each : results) {
+                if (each.findElement(By.className("css-yg30e6")).getText().contains(productName)) {
+                    Thread.sleep(1000);
+                    each.findElement(By.tagName("button")).click();
+                    Thread.sleep(2000);
+                    return status;
                 }
             }
+
             System.out.println("Unable to find the given product");
             return false;
-
         } catch (Exception e) {
             System.out.println("Exception while performing add to cart: " + e.getMessage());
             return false;
@@ -139,11 +133,13 @@ public class Home {
     public Boolean clickCheckout() {
         Boolean status = false;
         try {
+            WebElement cart = driver.findElement(By.className("cart"));
+            WebElement checkout =
+                    cart.findElement(By.xpath("//div[contains(@class, 'cart-footer')]//button"));
+            checkout.click();
+            status = true;
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 05: MILESTONE 4
             // Find and click on the the Checkout button
-            WebElement checkOut = driver.findElement(By.xpath("//button[text() = 'Checkout']"));
-            status = checkOut.isDisplayed();
-            checkOut.click();
             return status;
         } catch (Exception e) {
             System.out.println("Exception while clicking on Checkout: " + e.getMessage());
@@ -159,51 +155,38 @@ public class Home {
             // TODO: CRIO_TASK_MODULE_TEST_AUTOMATION - TEST CASE 06: MILESTONE 5
 
             // Find the item on the cart with the matching productName
+            List<WebElement> par_ele =
+                    driver.findElements(By.xpath("//div[@class='MuiBox-root css-1gjj37g']"));
+            for (int i = 0; i < par_ele.size(); i++) {
+                String pro_name = par_ele.get(i).findElement(By.xpath("./div[1]")).getText();
+                if (pro_name.equals(productName)) {
+                    WebElement qty_list = par_ele.get(i).findElement(By.xpath("./div[2]"))
+                            .findElement(By.className("css-u4p24i"));
+                    WebElement qty_minus = qty_list.findElement(By.xpath("./button[1]"));
+                    int qty = 0;
+                while(qty!=quantity){
+                    String qty_no = qty_list.findElement(By.xpath("./div")).getText();
+                    WebElement qty_plus = qty_list.findElement(By.xpath("./button[2]"));
+                    qty = Integer.parseInt(qty_no);
+                    
+                        if(qty>quantity){
+                            qty_minus.click();
+                            Thread.sleep(2000);
+                        }else if(qty<quantity){
+                            qty_plus.click();
+                            Thread.sleep(2000);
+                        }else{
+                            continue;
+                        }
+                    }
+                }
+            }
+
 
             // Increment or decrement the quantity of the matching product until the current
             // quantity is reached (Note: Keep a look out when then input quantity is 0,
             // here we need to remove the item completely from the cart)
-            Thread.sleep(1000);
-            List<WebElement> cartProductList = driver
-                    .findElements(By.xpath("//div[@class = 'MuiBox-root css-1gjj37g']/div[1]"));
-            for (WebElement ele : cartProductList) {
-                String text = ele.getText();
-                if (text.equalsIgnoreCase(productName)) {
-                    WebElement getQuantity = ele
-                            .findElement(By.xpath("./..//div[@class = 'MuiBox-root css-olyig7']"));
-                    int getQuantityVal = Integer.valueOf(getQuantity.getText());
-                    if (quantity == 0) {
-                        while (getQuantityVal != 0) {
-                            ele.findElement(By.xpath("./..//button[1]")).click();
-                           
-                            WebDriverWait wait = new WebDriverWait(driver, 30);
-                            wait.until(ExpectedConditions.textToBePresentInElement
-                            (getQuantity, String.valueOf(getQuantityVal-1)));
-                            getQuantityVal--;
 
-                        }
-                    } else if (getQuantityVal > quantity) {
-                        while (getQuantityVal != quantity) {
-                            ele.findElement(By.xpath("./..//button[1]")).click();
-                           
-                            WebDriverWait wait = new WebDriverWait(driver, 30);
-                            wait.until(ExpectedConditions.textToBePresentInElement
-                            (getQuantity, String.valueOf(getQuantityVal-1)));
-                            getQuantityVal--;
-                        }
-                    } else if (getQuantityVal < quantity) {
-                        while (getQuantityVal != quantity) {
-                            ele.findElement(By.xpath("./..//button[2]")).click();
-                           
-                            WebDriverWait wait = new WebDriverWait(driver, 30);
-                            wait.until(ExpectedConditions.textToBePresentInElement
-                            (getQuantity, String.valueOf(getQuantityVal+1)));
-                            getQuantityVal++;
-                        }
-                    }
-
-                }
-            }
 
             return true;
         } catch (Exception e) {
@@ -242,4 +225,3 @@ public class Home {
         }
     }
 }
-
